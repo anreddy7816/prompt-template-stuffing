@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: spring-openai-demo
+
+  ai:
+   openai:
+     api-key: ${OPENAI_API_KEY}
+
+
+server:
+  port: 9292
