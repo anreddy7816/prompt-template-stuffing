@@ -1,10 +1,15 @@
 package com.javatechie.service;
 
+import com.javatechie.advisor.AdutiTokenUsageAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderSupportAIAssistantService {
@@ -41,6 +46,7 @@ public class OrderSupportAIAssistantService {
     public String talkToAISupport(String customerName, String orderId, String customerMessage) {
         return chatClient
                 .prompt()
+                .advisors(List.of(new SimpleLoggerAdvisor(),new SafeGuardAdvisor(List.of("password","otp","cvv","bomb"),"For Security reason we never ask such sensitive information, please talk to our support executive",1),new AdutiTokenUsageAdvisor()))
                 .system(orderSystemPolicyPrompt)
                 .user(promptUserSpec -> promptUserSpec.text(orderUserPrompt)
                         .param("customerName", customerName)

@@ -5,7 +5,11 @@ spring:
   ai:
    openai:
      api-key: ${OPENAI_API_KEY}
-
-
-server:
-  port: 9292
+logging:
+  level:
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: DEBUG
