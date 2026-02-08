@@ -4,6 +4,7 @@ import com.javatechie.advisor.AdutiTokenUsageAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -44,8 +45,21 @@ public class OrderSupportAIAssistantService {
     }
 
     public String talkToAISupport(String customerName, String orderId, String customerMessage) {
+
+        ChatOptions build = ChatOptions.builder()
+                .model("gpt-4o-mini")
+                .temperature(0.3) // 0.3 for coding -> more value defines mode randomness
+                .maxTokens(200) // max number tokens in the response
+                .frequencyPenalty(0.7) // If response has more repeted words , restrict them.
+                .presencePenalty(0.7) //  don't repeat if word is present.
+                .stopSequences(List.of("3")) // If you want stop response when there is particular word found.
+                .topK(3) // top 3
+                .topP(0.1)
+                .build();
+
         return chatClient
                 .prompt()
+                .options(build)
                 .advisors(List.of(new SimpleLoggerAdvisor(),new SafeGuardAdvisor(List.of("password","otp","cvv","bomb"),"For Security reason we never ask such sensitive information, please talk to our support executive",1),new AdutiTokenUsageAdvisor()))
                 .system(orderSystemPolicyPrompt)
                 .user(promptUserSpec -> promptUserSpec.text(orderUserPrompt)

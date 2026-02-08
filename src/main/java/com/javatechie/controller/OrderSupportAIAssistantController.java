@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class OrderSupportAIAssistantController {
 
-    private OrderSupportAIAssistantService aiAssistantService;
+    private final OrderSupportAIAssistantService aiAssistantService;
 
     public OrderSupportAIAssistantController(OrderSupportAIAssistantService aiAssistantService) {
         this.aiAssistantService = aiAssistantService;
@@ -27,3 +27,4 @@ public class OrderSupportAIAssistantController {
         return aiAssistantService.talkToAISupport(customerName, orderId, customerMessage);
     }
 }
+
